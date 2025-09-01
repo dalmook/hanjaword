@@ -165,6 +165,18 @@
         .filter(({c})=> pos? (c.pos===pos) : true)
         .filter(({c})=> ch? ((c.chapter||'')===ch) : true)
         .filter(({c})=> hideL? !learned[c.hanzi] : true)
+        .filter(({c})=>{
+          const blob = [c.hanzi,c.pinyin,c.meaning,c.example,c.example_ko,c.chapter]
+            .join(String.fromCharCode(10))
+            .toLowerCase();
+          return q? blob.includes(q):true;
+        })
+        .map(x=>x.i);
+      if(resetCursor) cursor=0;
+    }))
+        .filter(({c})=> pos? (c.pos===pos) : true)
+        .filter(({c})=> ch? ((c.chapter||'')===ch) : true)
+        .filter(({c})=> hideL? !learned[c.hanzi] : true)
         .filter(({c})=>{ const blob=[c.hanzi,c.pinyin,c.meaning,c.example,c.example_ko,c.chapter].join("
 ").toLowerCase(); return q? blob.includes(q):true; })
         .map(x=>x.i);

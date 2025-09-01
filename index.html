@@ -37,7 +37,10 @@
     .quizOverlay.show{display:flex}
     body.lock{overflow:hidden;touch-action:none}
 
-    .quizTop{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #1f2b52}
+    .quizTop{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #1f2b52;gap:10px}
+    .modeToggle{display:flex;gap:6px;align-items:center;justify-content:center}
+    .seg{border:1px solid #2e3b5c;background:#172049;color:#e6eefc;padding:6px 10px;border-radius:999px;font-size:12px;cursor:pointer}
+    .seg[aria-pressed="true"]{background:#4da3ff;color:#081123;border-color:#5fb0ff;font-weight:700}
     .badge{font-size:12px;color:#081123;background:#90caf9;border-radius:999px;padding:6px 10px}
     .timer{font-weight:700;font-size:18px;color:var(--text)}
     .quizBody{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:16px;overflow:hidden}
@@ -87,6 +90,10 @@
   <div id="quizOverlay" class="quizOverlay" aria-hidden="true">
     <div class="quizTop">
       <span class="badge" id="goalBadge">목표 20</span>
+      <div class="modeToggle">
+        <button class="seg" id="modeH2MTop" aria-pressed="true">한자→뜻</button>
+        <button class="seg" id="modeM2HTop" aria-pressed="false">뜻→한자</button>
+      </div>
       <span class="timer" id="quizTimer">5</span>
     </div>
     <div class="quizBody">
@@ -126,9 +133,16 @@
     function current(){ return filteredIdxs.length? cards[ filteredIdxs[cursor] ] : null; }
 
     function render(){
-      applyFilter(false);
+      buildChapterOptions();
       const c=current();
       if(!c){ hanzi.textContent='결과 없음'; pinyin.textContent=''; meaning.textContent=''; example.textContent=''; updateHeaderStat(); return; }
+      hanzi.textContent=c.hanzi||''; pinyin.textContent=c.pinyin||'';
+      meaning.style.display='none'; example.style.display='none';
+      meaning.textContent=c.meaning||'';
+      example.textContent=c.example? c.example + (c.example_ko? ` (${c.example_ko})`:'') : '';
+      document.getElementById('toggleLearned').textContent = learned[c.hanzi]? '✅ 외움 해제' : '✅ 외웠다';
+      updateHeaderStat();
+    }
       hanzi.textContent=c.hanzi||''; pinyin.textContent=c.pinyin||'';
       meaning.style.display='none'; example.style.display='none';
       meaning.textContent=c.meaning||'';
@@ -143,10 +157,27 @@
       const ch=document.getElementById('filterChap').value;
       const hideL=document.getElementById('hideLearned').checked;
       filteredIdxs = cards.map((c,i)=>({c,i}))
+        .filter(({c})=> pos? (c.pos===pos) : true)
+        .filter(({c})=> ch? ((c.chapter||'')===ch) : true)
+        .filter(({c})=> hideL? !learned[c.hanzi] : true)
+        .filter(({c})=>{ const blob=[c.hanzi,c.pinyin,c.meaning,c.example,c.example_ko,c.chapter].join("
+").toLowerCase(); return q? blob.includes(q):true; })
+        .map(x=>x.i);
+      if(resetCursor) cursor=0;
+    }
+    function uniq(arr){ return [...new Set(arr.filter(Boolean))]; }
+    function buildChapterOptions(){
+      const sel=document.getElementById('filterChap');
+      const cur=sel.value;
+      const chaps=uniq(cards.map(c=>c.chapter));
+      sel.innerHTML=['<option value="">모든 챕터</option>'].concat(chaps.map(c=>`<option value="${c}">${c}</option>`)).join('');
+      if(chaps.includes(cur)) sel.value=cur;
+    }))
         .filter(({c})=> pos? c.pos===pos : true)
         .filter(({c})=> ch? (c.chapter||'')===ch : true)
         .filter(({c})=> hideL? !learned[c.hanzi] : true)
-        .filter(({c})=>{ const blob=[c.hanzi,c.pinyin,c.meaning,c.example,c.example_ko,c.chapter].join("\n").toLowerCase(); return q? blob.includes(q):true; })
+        .filter(({c})=>{ const blob=[c.hanzi,c.pinyin,c.meaning,c.example,c.example_ko,c.chapter].join("
+").toLowerCase(); return q? blob.includes(q):true; })
         .map(x=>x.i);
       if(resetCursor) cursor=0;
     }
@@ -154,7 +185,19 @@
     function next(){ if(!filteredIdxs.length) return; cursor=(cursor+1)%filteredIdxs.length; render(); }
     function prev(){ if(!filteredIdxs.length) return; cursor=(cursor-1+filteredIdxs.length)%filteredIdxs.length; render(); }
 
-    async function sync(){ try{ const res=await fetch(SHEET_URL+"?action=read"); const js=await res.json(); const data=Array.isArray(js)? js : (js&&js.data?js.data:[]); if(Array.isArray(data)){ cards=data; saveCards(); cursor=0; render(); alert('동기화 완료: '+cards.length+'개'); } }catch(e){ alert('동기화 실패: '+e); } }
+    async function sync(){
+      try{
+        const res=await fetch(SHEET_URL+"?action=read");
+        const js=await res.json();
+        const data=Array.isArray(js)? js : (js&&js.data?js.data:[]);
+        if(Array.isArray(data)){
+          cards=data; saveCards();
+          buildChapterOptions();
+          applyFilter(); cursor=0; render();
+          alert('동기화 완료: '+cards.length+'개');
+        }
+      }catch(e){ alert('동기화 실패: '+e); }
+    } }catch(e){ alert('동기화 실패: '+e); } }
 
     document.getElementById('toggleLearned').onclick=()=>{ const c=current(); if(!c) return; if(learned[c.hanzi]) delete learned[c.hanzi]; else learned[c.hanzi]=true; saveLearned(); render(); };
     document.getElementById('hideLearned').onchange=()=>{ applyFilter(); render(); };
@@ -164,7 +207,7 @@
     function openOverlay(){ overlay.classList.add('show'); document.body.classList.add('lock'); }
     function closeOverlay(){ overlay.classList.remove('show'); document.body.classList.remove('lock'); clearTimer(); }
 
-    function startQuiz(){ if(!filteredIdxs.length){alert('문항이 없습니다'); return;} // 모드 선택 생략: 직전 모드 기억하거나 기본값 사용
+    function startQuiz(){ if(!filteredIdxs.length){alert('문항이 없습니다'); return;} if(!quizMode) quizMode='hanzi2meaning'; openOverlay(); nextQuiz(); } // 모드 선택 생략: 직전 모드 기억하거나 기본값 사용
       if(!quizMode){ quizMode='hanzi2meaning'; }
       openOverlay(); nextQuiz(); }
 
@@ -211,7 +254,17 @@
     document.getElementById('nextBtn').onclick=next; document.getElementById('prevBtn').onclick=prev; document.getElementById('syncBtn').onclick=sync; document.getElementById('quizBtn').onclick=startQuiz;
     document.getElementById('quizExit').onclick=()=>closeOverlay(); document.getElementById('quizSkip').onclick=()=>{ next(); nextQuiz(); };
 
+    document.getElementById('filterPos').onchange=()=>{ applyFilter(); render(); };
+    document.getElementById('filterChap').onchange=()=>{ applyFilter(); render(); };
+    document.getElementById('search').oninput=()=>{ applyFilter(); render(); };
+
+    // 퀴즈 모드 토글(상단 세그먼트)
+    document.getElementById('modeH2MTop').onclick=()=>{ quizMode='hanzi2meaning'; document.getElementById('modeH2MTop').setAttribute('aria-pressed','true'); document.getElementById('modeM2HTop').setAttribute('aria-pressed','false'); nextQuiz(); };
+    document.getElementById('modeM2HTop').onclick=()=>{ quizMode='meaning2hanzi'; document.getElementById('modeH2MTop').setAttribute('aria-pressed','false'); document.getElementById('modeM2HTop').setAttribute('aria-pressed','true'); nextQuiz(); };
+
     // 초기
+    buildChapterOptions();
+    applyFilter();
     render();
   </script>
 </body>

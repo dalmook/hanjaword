@@ -132,22 +132,28 @@
 
     function current(){ return filteredIdxs.length? cards[ filteredIdxs[cursor] ] : null; }
 
-    function render(){
+    function render() {
       buildChapterOptions();
-      const c=current();
-      if(!c){ hanzi.textContent='결과 없음'; pinyin.textContent=''; meaning.textContent=''; example.textContent=''; updateHeaderStat(); return; }
-      hanzi.textContent=c.hanzi||''; pinyin.textContent=c.pinyin||'';
-      meaning.style.display='none'; example.style.display='none';
-      meaning.textContent=c.meaning||'';
-      example.textContent=c.example? c.example + (c.example_ko? ` (${c.example_ko})`:'') : '';
-      document.getElementById('toggleLearned').textContent = learned[c.hanzi]? '✅ 외움 해제' : '✅ 외웠다';
-      updateHeaderStat();
-    }
-      hanzi.textContent=c.hanzi||''; pinyin.textContent=c.pinyin||'';
-      meaning.style.display='none'; example.style.display='none';
-      meaning.textContent=c.meaning||'';
-      example.textContent=c.example? c.example + (c.example_ko? ` (${c.example_ko})`:'') : '';
-      document.getElementById('toggleLearned').textContent = learned[c.hanzi]? '✅ 외움 해제' : '✅ 외웠다';
+      const c = current();
+      if (!c) {
+        hanzi.textContent = '결과 없음';
+        pinyin.textContent = '';
+        meaning.textContent = '';
+        example.textContent = '';
+        updateHeaderStat();
+        return;
+      }
+      hanzi.textContent = c.hanzi || '';
+      pinyin.textContent = c.pinyin || '';
+      meaning.style.display = 'none';
+      example.style.display = 'none';
+      meaning.textContent = c.meaning || '';
+      example.textContent = c.example
+        ? c.example + (c.example_ko ? ` (${c.example_ko})` : '')
+        : '';
+      document.getElementById('toggleLearned').textContent = learned[c.hanzi]
+        ? '✅ 외움 해제'
+        : '✅ 외웠다';
       updateHeaderStat();
     }
 

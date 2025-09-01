@@ -120,8 +120,8 @@
 
     // 구글 시트 동기화
   async function sync(){
-    const EP_KEY='cn_vocab_endpoint';
-    let url = localStorage.getItem(EP_KEY) || prompt('https://script.google.com/macros/s/AKfycbwpY0YKjzzr2KIfWIi8bcdNR4eJqyk8Hr2cRY4tt2MuIv8syI_wStRpnry0JVCwHp8f/exec');
+    const EP_KEY='https://script.google.com/macros/s/AKfycbwpY0YKjzzr2KIfWIi8bcdNR4eJqyk8Hr2cRY4tt2MuIv8syI_wStRpnry0JVCwHp8f/exec';
+    let url = localStorage.getItem(EP_KEY) || prompt('관리자접근가능');
     if(!url) return; 
     localStorage.setItem(EP_KEY, url);
     try{

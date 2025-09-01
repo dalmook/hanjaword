@@ -173,7 +173,7 @@
         })
         .map(x=>x.i);
       if(resetCursor) cursor=0;
-    }))
+    })
         .filter(({c})=> pos? (c.pos===pos) : true)
         .filter(({c})=> ch? ((c.chapter||'')===ch) : true)
         .filter(({c})=> hideL? !learned[c.hanzi] : true)

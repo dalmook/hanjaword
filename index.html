@@ -1,327 +1,230 @@
 <!doctype html>
-
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
   <title>중국어 단어장 · 모바일</title>
-  <meta name="description" content="한자·병음·뜻·품사·챕터·예문 + 4지선다 퀴즈 + 구글 시트 연동 + 중국어 TTS" />
+  <meta name="description" content="한자·병음·뜻·품사·챕터·예문 + 4지선다 퀴즈 + 구글 시트 연동 + 음성 발음" />
   <style>
-    :root{ --bg:#0b1020; --panel:#12182b; --accent:#4da3ff; --muted:#94a3b8; --text:#e6eefc; --ok:#22c55e; --danger:#ef4444; --radius:18px; }
+    :root{
+      --bg:#0b1020; --bg2:#0a0f23; --panel:#0f1530; --panel2:#121a3a; --accent:#4da3ff; --text:#e6eefc; --muted:#9fb3d7; --ok:#22c55e; --danger:#ef4444;
+      --shadow:0 10px 30px rgba(0,0,0,.45);
+      --r:18px;
+    }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0;background:linear-gradient(180deg,#0b1020,#0a0f23 50%,#0b1020);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Pretendard,Apple SD Gothic Neo,Malgun Gothic,sans-serif}
-    .wrap{max-width:900px;margin:0 auto;padding:16px 16px 112px}
-    header{position:sticky;top:0;background:rgba(11,16,32,.85);backdrop-filter:blur(8px);z-index:10;border-bottom:1px solid #1f2942}
-    .bar{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px}
-    .title{display:flex;gap:10px;align-items:center}
-    .title h1{font-size:18px;margin:0;white-space:nowrap}
-    .chip{font-size:12px;color:#0b1020;background:var(--accent);padding:4px 8px;border-radius:999px}
-    .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
-    button,select,input,textarea{font:inherit;color:inherit}
-    .btn{background:#1b2544;border:1px solid #26325a;color:var(--text);padding:10px 12px;border-radius:12px;cursor:pointer}
-    .btn:hover{background:#202c52}
+    body{margin:0;background:linear-gradient(180deg,var(--bg),var(--bg2) 50%,var(--bg));color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Pretendard,sans-serif}
+    .wrap{max-width:920px;margin:0 auto;padding:16px 16px 120px}
+    header{position:sticky;top:0;background:rgba(10,15,35,.75);backdrop-filter:blur(10px);border-bottom:1px solid #1f2b52;z-index:10}
+    header h1{font-size:18px;margin:0 0 8px}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+    input,select{background:#0e1430;border:1px solid #2a3a6c;color:var(--text);padding:10px 12px;border-radius:12px;min-width:130px}
+    .btn{background:#1b254a;border:1px solid #2b3a6f;color:var(--text);padding:10px 14px;border-radius:12px;cursor:pointer;box-shadow:var(--shadow);transition:transform .08s ease}
+    .btn:active{transform:translateY(1px)}
     .btn.acc{background:var(--accent);border-color:#5fb0ff;color:#081123}
-    .btn.ghost{background:transparent;border:1px dashed #32406c}
-    .btn.small{padding:7px 9px;border-radius:10px;font-size:13px}
-    .select,.input{background:#0e1430;border:1px solid #27345f;border-radius:12px;padding:10px 12px;color:var(--text)}
-    .input{width:170px}.stage{margin-top:14px}
-.card{position:relative;background:radial-gradient(120% 120% at 0% 0%,#151e3c,#0e1430);border:1px solid #25315a;border-radius:var(--radius);padding:18px 16px;box-shadow:0 10px 30px rgba(0,0,0,.45);min-height:300px;display:flex;flex-direction:column;justify-content:space-between}
-.card-header{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.meta{display:flex;gap:8px;align-items:center}
-.pos{font-size:12px;color:#9fb3d7;background:#0a122d;border:1px solid #26325a;padding:4px 8px;border-radius:999px}
-.chapter{font-size:12px;color:#081123;background:#90caf9;border:0;padding:4px 8px;border-radius:999px}
-.hanzi{font-size:48px;line-height:1.1;margin:8px 0 0;letter-spacing:.5px}
-.pinyin{font-size:18px;color:#cbd5e1;margin-top:6px}
-.meaning{margin-top:6px;font-size:16px;color:#e5edff}
-.example{margin-top:10px;border-top:1px dashed #2b3a6b;padding-top:10px;color:#d6e1ff}
-.example small{display:block;color:#9fb3d7;margin-top:4px}
 
-.quiz .mc{display:grid;grid-template-columns:1fr;gap:8px;margin:10px 0 6px}
-.quiz .mc .btn{width:100%;text-align:left}
-.stat{font-size:12px;color:#9fb3d7}
-.right{color:var(--ok)}
-.wrong{color:var(--danger)}
+    /* Card */
+    .card{position:relative;margin-top:14px;background:radial-gradient(120% 120% at 0% 0%,#162047,var(--panel));border:1px solid #27345f;border-radius:var(--r);padding:20px;min-height:260px;box-shadow:var(--shadow)}
+    .hanzi{font-size:48px;letter-spacing:.4px}
+    .pinyin{font-size:18px;color:#cbd5e1;margin-top:6px}
+    .meaning{margin-top:10px;font-size:18px;user-select:none;cursor:pointer}
+    .meaning.masked{color:var(--muted);opacity:.95}
+    .example{margin-top:12px;border-top:1px dashed #2a3a6c;padding-top:10px;color:#d6e1ff}
+    .actions{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
 
-@media(max-width:760px){ .input{width:135px} .hanzi{font-size:40px} }
+    /* Quiz */
+    dialog{border:none;border-radius:16px;background:#0b142f;color:var(--text)}
+    #mcOptions{display:grid;grid-template-columns:1fr;gap:8px}
 
+    /* Bottom nav on mobile */
+    .bottom-bar{position:fixed;left:0;right:0;bottom:0;background:rgba(10,15,35,.85);backdrop-filter:blur(10px);border-top:1px solid #1f2b52;display:flex;gap:8px;padding:10px;justify-content:center}
+    .bottom-bar .btn{min-width:110px}
+
+    @media(min-width:700px){ #mcOptions{grid-template-columns:1fr 1fr} }
+    @media(max-width:420px){ .hanzi{font-size:42px} }
   </style>
 </head>
 <body>
-  <header>
-    <div class="bar wrap">
-      <div class="title">
-        <span class="chip">H5</span>
-        <h1>중국어 단어장</h1>
-      </div>
-      <div class="controls">
-        <input id="search" class="input" placeholder="검색 (한자/병음/뜻/예문)" />
-        <select id="filterPos" class="select">
-          <option value="">품사 전체</option>
-          <option>명사</option><option>동사</option><option>형용사</option><option>부사</option>
-          <option>대명사</option><option>전치사</option><option>접속사</option><option>수사</option><option>조사</option><option>기타</option>
-        </select>
-        <select id="filterChap" class="select">
-          <option value="">모든 챕터</option>
-        </select>
-        <button class="btn small" id="shuffleBtn">섞기</button>
-        <button class="btn small" id="prevBtn">이전</button>
-        <button class="btn small" id="nextBtn">다음</button>
-        <button class="btn acc small" id="addBtn">추가</button>
-        <button class="btn ghost small" id="importBtn">가져오기</button>
-        <button class="btn ghost small" id="exportBtn">내보내기</button>
-        <button class="btn small" id="loadSheet">시트 불러오기</button>
-        <button class="btn small" id="saveSheet">시트로 저장</button>
-        <button class="btn small" id="quizBtn">퀴즈</button>
-      </div>
+  <header class="wrap">
+    <h1>중국어 단어장</h1>
+    <div class="toolbar">
+      <input id="search" placeholder="검색 (한자/뜻/예문)" />
+      <select id="filterPos"><option value="">품사 전체</option><option>명사</option><option>동사</option><option>형용사</option></select>
+      <select id="filterChap"><option value="">모든 챕터</option></select>
+      <button class="btn acc" id="addBtn">추가</button>
+      <button class="btn" id="quizBtn">퀴즈</button>
+      <button class="btn" id="syncBtn">구글 시트 동기화</button>
     </div>
-  </header>  <main class="wrap stage">
+  </header>
+
+  <main class="wrap">
     <section class="card" id="card">
-      <div class="card-header">
-        <div class="meta">
-          <span class="pos" id="pos">—</span>
-          <span class="chapter" id="chap">—</span>
-        </div>
+      <div class="hanzi" id="hanzi">단어를 불러오세요</div>
+      <div class="pinyin" id="pinyin"></div>
+      <div class="meaning" id="meaning"></div>
+      <div class="example" id="example"></div>
+      <div class="actions">
+        <button class="btn" id="speakWord">🔊 단어 발음</button>
+        <button class="btn" id="speakExample">🎧 예문 발음</button>
       </div>
-      <div>
-        <div class="hanzi" id="hanzi">단어를 불러오세요</div>
-        <div class="pinyin" id="pinyin"></div>
-        <div class="meaning" id="meaning"></div>
-        <div class="example" id="example"></div>
-        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn" id="speakWord">🔊 단어 발음</button>
-          <button class="btn" id="speakExample">🎧 예문 발음</button>
-        </div>
-      </div>
-    </section><div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><span style="opacity:.7">Tip: Space=다음, ←/→=이전/다음, F=섞기</span></div>
+    </section>
+  </main>
 
-  </main>  <!-- 단어 추가 모달 -->  <dialog id="addModal">
-    <form method="dialog" style="padding:16px;background:#0b142f;color:var(--text);border:none;border-radius:18px;max-width:800px;width:92vw">
-      <h3 style="margin:0 0 8px">단어 추가</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <label>한자<input id="f_hanzi" class="input" placeholder="例如：学习" required></label>
-        <label>병음<input id="f_pinyin" class="input" placeholder="xuéxí"></label>
-        <label>뜻(한국어)<input id="f_meaning" class="input" placeholder="공부하다"></label>
-        <label>품사<select id="f_pos" class="select"><option>명사</option><option selected>동사</option><option>형용사</option><option>부사</option><option>기타</option></select></label>
-        <label>챕터<input id="f_chap" class="input" placeholder="chapter1"></label>
-        <div></div>
-        <label style="grid-column:1/3">예문(중국어)<textarea id="f_ex" class="input" style="min-height:80px"></textarea></label>
-        <label style="grid-column:1/3">예문 뜻(한국어)<textarea id="f_exko" class="input" style="min-height:80px"></textarea></label>
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
-        <button class="btn" value="cancel">닫기</button>
-        <button class="btn acc" id="saveAdd">저장</button>
-      </div>
-    </form>
-  </dialog>  <!-- 퀴즈 모달 (4지선다) -->  <dialog id="quizModal">
-    <div class="quiz" style="padding:16px;background:#0b142f;color:var(--text);border:none;border-radius:18px;max-width:720px;width:92vw">
-      <h3 style="margin:0 0 8px">퀴즈 모드 (4지선다)</h3>
-      <p id="quizQ" style="margin-top:8px"></p>
-      <div id="mcOptions" class="mc"></div>
-      <div class="stat" id="quizStat">정답 0 / 시도 0 (정확도 0%)</div>
-      <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
-        <button class="btn" id="quizNext">다음 문제</button>
-        <button class="btn" id="quizClose">닫기</button>
-      </div>
-      <p id="quizMsg" class="stat"></p>
-    </div>
-  </dialog>  <!-- 퀴즈 모드 선택 모달 -->  <dialog id="quizModeModal">
-    <div style="padding:16px;background:#0b142f;color:var(--text);border:none;border-radius:18px;max-width:520px;width:92vw">
-      <h3 style="margin:0 0 8px">퀴즈 모드 선택</h3>
-      <p style="opacity:.8;margin:6px 0 10px">원하는 문제 유형을 선택하세요.</p>
+  <!-- 하단 고정 내비게이션 -->
+  <div class="bottom-bar">
+    <button class="btn" id="prevBtn">⟵ 이전</button>
+    <button class="btn" id="nextBtn">다음 ⟶</button>
+  </div>
+
+  <!-- 퀴즈 모드 -->
+  <dialog id="quizModeModal">
+    <div style="padding:16px">
+      <h3>퀴즈 모드 선택</h3>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn acc" id="modeH2M">한자 → 뜻 (4지선다)</button>
-        <button class="btn" id="modeM2H">뜻 → 한자 (4지선다)</button>
+        <button class="btn acc" id="modeH2M">한자 → 뜻</button>
+        <button class="btn" id="modeM2H">뜻 → 한자</button>
       </div>
-      <div style="margin-top:12px;text-align:right">
-        <button class="btn" id="quizModeClose">닫기</button>
+      <div style="margin-top:12px"><button class="btn" onclick="quizModeModal.close()">닫기</button></div>
+    </div>
+  </dialog>
+
+  <dialog id="quizModal">
+    <div style="padding:16px;max-width:720px;width:92vw">
+      <h3>퀴즈</h3>
+      <p id="quizQ"></p>
+      <div id="mcOptions"></div>
+      <p id="quizFeedback" style="margin:6px 0 10px;color:#9fb3d7"></p>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn" id="quizNext">다음</button>
+        <button class="btn" onclick="quizModal.close()">닫기</button>
       </div>
     </div>
-  </dialog>  <input type="file" id="filePicker" accept=".json,.csv" style="display:none" />  <script>
-    // ===== 1) 구글 시트 웹앱 엔드포인트 (고정 설정) =====
-    // 아래 값을 본인 Apps Script 배포 URL로 바꿔주세요.
-    const GAS_ENDPOINT = "https://script.google.com/macros/s/AKfycbwpY0YKjzzr2KIfWIi8bcdNR4eJqyk8Hr2cRY4tt2MuIv8syI_wStRpnry0JVCwHp8f/exec"; // ← 여기를 실제 URL로 교체
+  </dialog>
 
-    // ===== 2) 데이터/상태 =====
-    const LS_KEY = 'cn_vocab_cards_v4';
-    let cards = load() || sample();
-    let filteredIdxs = [...cards.keys()];
-    let cursor = 0;
+  <script>
+    // 1) 구글 시트 웹앱 URL (고정 설정)
+    const SHEET_URL = "https://script.google.com/macros/s/AKfycbwpY0YKjzzr2KIfWIi8bcdNR4eJqyk8Hr2cRY4tt2MuIv8syI_wStRpnry0JVCwHp8f/exec";
 
-    const els = {
-      hanzi: document.getElementById('hanzi'),
-      pinyin: document.getElementById('pinyin'),
-      meaning: document.getElementById('meaning'),
-      example: document.getElementById('example'),
-      pos: document.getElementById('pos'),
-      chap: document.getElementById('chap'),
-      filterPos: document.getElementById('filterPos'),
-      filterChap: document.getElementById('filterChap'),
-      search: document.getElementById('search'),
-      addModal: document.getElementById('addModal'),
-      quizModal: document.getElementById('quizModal'),
-      quizQ: document.getElementById('quizQ'),
-      mcOptions: document.getElementById('mcOptions'),
-      quizStat: document.getElementById('quizStat'),
-      quizMsg: document.getElementById('quizMsg'),
-      quizModeModal: document.getElementById('quizModeModal')
-    };
+    // 2) 상태
+    const LS_KEY = 'cn_vocab_cards_v5';
+    let cards = JSON.parse(localStorage.getItem(LS_KEY)||'[]');
+    let cursor=0; let quizMode=null; let quizCorrect='';
 
-    const quizState = { mode:'hanzi2meaning', tried:0, correct:0, answer:'' };
-
-    function load(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)||'[]'); }catch(e){ return []; } }
     function save(){ localStorage.setItem(LS_KEY, JSON.stringify(cards)); }
-    function sample(){ return [
-      {hanzi:'学习', pinyin:'xuéxí', meaning:'공부하다', pos:'동사', example:'我喜欢学习中文。', example_ko:'나는 중국어 공부를 좋아해요.', chapter:'chapter1'},
-      {hanzi:'朋友', pinyin:'péngyou', meaning:'친구', pos:'명사', example:'他是我的好朋友。', example_ko:'그는 나의 좋은 친구예요.', chapter:'chapter1'},
-      {hanzi:'漂亮', pinyin:'piàoliang', meaning:'예쁘다', pos:'형용사', example:'这个城市很漂亮。', example_ko:'이 도시는 매우 예뻐요.', chapter:'chapter2'},
-      {hanzi:'老师', pinyin:'lǎoshī', meaning:'선생님', pos:'명사', example:'我的老师很亲切。', example_ko:'나의 선생님은 친절해요.', chapter:'chapter2'},
-      {hanzi:'吃饭', pinyin:'chīfàn', meaning:'밥을 먹다', pos:'동사', example:'我们一起去吃饭吧。', example_ko:'우리 같이 밥 먹으러 가자.', chapter:'chapter3'}
-    ]; }
+    function current(){ return cards[cursor]||null; }
 
-    function uniq(arr){ return [...new Set(arr.filter(Boolean))]; }
-
-    // ===== 3) 렌더링 =====
-    function current(){ return filteredIdxs.length ? cards[ filteredIdxs[cursor] ] : null; }
+    // 3) 렌더 (뜻은 기본 비공개 → 탭 시 공개)
     function render(){
-      buildChapterOptions();
-      const c = current();
-      if(!c){ els.hanzi.textContent='결과 없음'; els.pinyin.textContent=''; els.meaning.textContent=''; els.example.textContent=''; els.pos.textContent='—'; els.chap.textContent='—'; return; }
-      els.hanzi.textContent = c.hanzi||'';
-      els.pinyin.textContent = c.pinyin||'';
-      els.meaning.textContent = c.meaning||'';
-      els.pos.textContent = c.pos||'—';
-      els.chap.textContent = (c.chapter||'—').toUpperCase();
-      const exH = c.example? '📌 '+escapeHTML(c.example) : '';
-      const exK = c.example_ko? '<small>'+escapeHTML(c.example_ko)+'</small>' : '';
-      els.example.innerHTML = exH + (exH&&exK?'<br>':'') + exK;
-    }
-    function escapeHTML(s=''){ return s.replace(/[&<>"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m])); }
-
-    // ===== 4) 필터/검색 =====
-    function buildChapterOptions(){
-      const cur = els.filterChap.value;
-      const opts = [''].concat(uniq(cards.map(c=>c.chapter)));
-      els.filterChap.innerHTML = opts.map(v=>`<option value="${v}">${v? v : '모든 챕터'}</option>`).join('');
-      if(opts.includes(cur)) els.filterChap.value = cur;
-    }
-    function applyFilter(){
-      const q = (els.search.value||'').trim().toLowerCase();
-      const fpos = els.filterPos.value;
-      const fch = els.filterChap.value;
-      filteredIdxs = cards.map((c,i)=>({c,i}))
-        .filter(({c})=> fpos? c.pos===fpos : true)
-        .filter(({c})=> fch? (c.chapter||'')===fch : true)
-        .filter(({c})=>{ const blob=[c.hanzi,c.pinyin,c.meaning,c.example,c.example_ko,c.chapter].join('\n').toLowerCase(); return q? blob.includes(q) : true; })
-        .map(x=>x.i);
-      if(!filteredIdxs.length){ cursor=0; render(); return; }
-      cursor=0; render();
+      const c=current();
+      if(!c){ hanzi.textContent='단어 없음'; pinyin.textContent=''; meaning.textContent=''; example.textContent=''; return; }
+      hanzi.textContent=c.hanzi||''; pinyin.textContent=c.pinyin||'';
+      meaning.dataset.value = c.meaning || '';
+      meaning.classList.add('masked');
+      meaning.textContent = meaning.dataset.value ? '탭하여 뜻 보기' : '';
+      example.textContent=c.example ? (c.example + (c.example_ko ? " ("+c.example_ko+")" : "")) : '';
     }
 
-    // ===== 5) 내비게이션 =====
-    function next(){ if(!filteredIdxs.length) return; cursor=(cursor+1)%filteredIdxs.length; render(); }
-    function prev(){ if(!filteredIdxs.length) return; cursor=(cursor-1+filteredIdxs.length)%filteredIdxs.length; render(); }
-    function shuffle(){ for(let i=filteredIdxs.length-1;i>0;i--){ const j=(Math.random()*(i+1)|0); [filteredIdxs[i],filteredIdxs[j]]=[filteredIdxs[j],filteredIdxs[i]]; } cursor=0; render(); }
+    // 4) 검색/필터 (간단형; 필요 시 확장 가능)
+    search.oninput = ()=>applyFilter();
+    filterPos.onchange = ()=>applyFilter();
+    filterChap.onchange = ()=>applyFilter();
+    function applyFilter(){ /* 필요 시 확장: 지금은 전체 cards 사용 */ }
 
-    // ===== 6) 추가 모달 =====
-    document.getElementById('addBtn').onclick=()=>{ els.addModal.showModal(); document.getElementById('f_hanzi').focus(); };
-    document.getElementById('saveAdd').onclick=(e)=>{
-      e.preventDefault();
-      const item={ hanzi:val('f_hanzi'), pinyin:val('f_pinyin'), meaning:val('f_meaning'), pos:val('f_pos'), example:val('f_ex'), example_ko:val('f_exko'), chapter:val('f_chap') };
-      if(!item.hanzi){ alert('한자를 입력해 주세요'); return; }
-      cards.push(item); save(); applyFilter(); els.addModal.close(); cursor=filteredIdxs.length-1; render();
-    };
-    function val(id){ return (document.getElementById(id).value||'').trim(); }
+    // 5) 이동
+    function next(){ if(!cards.length) return; cursor=(cursor+1)%cards.length; render(); }
+    function prev(){ if(!cards.length) return; cursor=(cursor-1+cards.length)%cards.length; render(); }
 
-    // ===== 7) 파일 입/출력 =====
-    document.getElementById('exportBtn').onclick=()=>{ const blob=new Blob([JSON.stringify(cards,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='cn-vocab.json'; a.click(); };
-    const picker=document.getElementById('filePicker');
-    document.getElementById('importBtn').onclick=()=>picker.click();
-    picker.onchange=async (e)=>{ const file=e.target.files[0]; if(!file) return; const text=await file.text();
-      if(file.name.endsWith('.json')){ try{ const arr=JSON.parse(text); cards = Array.isArray(arr)? arr : (arr && Array.isArray(arr.data)? arr.data : cards); save(); applyFilter(); render(); }catch(err){ alert('JSON 파싱 오류'); } }
-      else if(file.name.endsWith('.csv')){ const rows=text.split(/\n+/).map(r=>r.trim()).filter(Boolean); cards=rows.map(r=>{ const [hanzi,pinyin,meaning,pos,example,example_ko,chapter]=r.split(','); return {hanzi,pinyin,meaning,pos,example,example_ko,chapter}; }); save(); applyFilter(); render(); }
-      e.target.value=''; };
-
-    // ===== 8) 구글 시트 연동 (고정 엔드포인트 사용) =====
-    async function loadFromSheet(){ if(!GAS_ENDPOINT){ alert('GAS_ENDPOINT가 설정되지 않았습니다.'); return; }
-      try{ const res=await fetch(GAS_ENDPOINT+"?action=read",{method:'GET'}); const js=await res.json(); const data=Array.isArray(js)? js : (js && js.data ? js.data : []);
-        if(Array.isArray(data)){ cards=data; save(); applyFilter(); render(); alert('시트 불러오기 완료: '+cards.length+'개'); }
-        else alert('형식 오류: data 배열이 없습니다');
-      }catch(err){ alert('시트 통신 오류: '+err); }
+    // 6) 시트 동기화
+    async function sync(){
+      try{
+        const res = await fetch(SHEET_URL+"?action=read");
+        const js = await res.json();
+        const data = Array.isArray(js)? js : (js&&js.data?js.data:[]);
+        if(Array.isArray(data)){ cards=data; save(); cursor=0; render(); alert("동기화 완료: "+cards.length+"개"); }
+        else alert("시트 응답 형식 오류");
+      }catch(e){ alert("동기화 실패: "+e); }
     }
-    async function saveToSheet(){ if(!GAS_ENDPOINT){ alert('GAS_ENDPOINT가 설정되지 않았습니다.'); return; }
-      try{ const res=await fetch(GAS_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'write',data:cards})}); const js=await res.json(); const ok=js && (js.ok || js.rows>=0); alert(ok? '시트 저장 완료' : '저장 실패'); }
-      catch(err){ alert('시트 통신 오류: '+err); }
+
+    // 7) 퀴즈
+    function startQuiz(){ quizModeModal.showModal(); }
+    function nextQuiz(){
+      const c=current(); if(!c) return;
+      if(quizMode==='hanzi2meaning'){
+        quizQ.textContent=`뜻은 무엇일까요? → ${c.hanzi}`;
+        quizCorrect=c.meaning||'';
+        makeOptions('meaning');
+      }else{
+        quizQ.textContent=`한자는 무엇일까요? → ${c.meaning}`;
+        quizCorrect=c.hanzi||'';
+        makeOptions('hanzi');
+      }
     }
-    document.getElementById('loadSheet').onclick=loadFromSheet;
-    document.getElementById('saveSheet').onclick=saveToSheet;
-
-    // ===== 9) 퀴즈 (4지선다) =====
-    document.getElementById('quizBtn').onclick=()=>{ if(!filteredIdxs.length){ alert('문제가 없습니다. 단어를 불러오거나 필터를 비워보세요.'); return; } els.quizModeModal.showModal(); };
-    document.getElementById('quizClose').onclick=()=>els.quizModal.close();
-    document.getElementById('quizNext').onclick=()=>{ next(); nextQuestion(); };
-    document.getElementById('modeH2M').onclick=()=>{ quizState.mode='hanzi2meaning'; startQuiz(); };
-    document.getElementById('modeM2H').onclick=()=>{ quizState.mode='meaning2hanzi'; startQuiz(); };
-    document.getElementById('quizModeClose').onclick=()=>els.quizModeModal.close();
-
-    function startQuiz(){ quizState.tried=0; quizState.correct=0; els.quizMsg.textContent=''; updateQuizStat(); nextQuestion(); els.quizModeModal.close(); els.quizModal.showModal(); }
-    function updateQuizStat(){ const acc=quizState.tried? Math.round(quizState.correct/quizState.tried*100):0; els.quizStat.textContent=`정답 ${quizState.correct} / 시도 ${quizState.tried} (정확도 ${acc}%)`; }
-    function normalizeKo(s=''){ return s.replace(/\s+/g,'').replace(/[.,!?:;~·]/g,''); }
-    function normalizeZh(s=''){ return s.replace(/\s+/g,'').replace(/[，。！？：；、·~]/g,''); }
-
-    function nextQuestion(){ const c=current(); if(!c){ els.quizQ.textContent='문항이 없습니다'; return; }
-      const askHanzi=(quizState.mode==='hanzi2meaning'); els.quizQ.textContent= askHanzi? `이 단어의 뜻은 무엇일까요? → ${c.hanzi}` : `이 뜻에 해당하는 한자는 무엇일까요? → ${c.meaning}`;
-      const answer = askHanzi ? (c.meaning||'') : (c.hanzi||''); quizState.answer=answer;
-      const field = askHanzi ? 'meaning' : 'hanzi'; const pool=filteredIdxs.map(i=>cards[i][field]).filter(Boolean);
-      for(let i=pool.length-1;i>0;i--){ const j=(Math.random()*(i+1)|0); [pool[i],pool[j]]=[pool[j],pool[i]]; }
-      const optsSet=new Set([answer]);
-      for(const v of pool){ if(optsSet.size>=4) break; if(compareChoice(v,answer)) continue; optsSet.add(v); }
-      const opts=Array.from(optsSet); while(opts.length<4 && pool.length){ const v=pool[(Math.random()*pool.length)|0]; if(!compareChoice(v,answer) && !opts.includes(v)) opts.push(v); }
-      for(let i=opts.length-1;i>0;i--){ const j=(Math.random()*(i+1)|0); [opts[i],opts[j]]=[opts[j],opts[i]]; }
-      els.mcOptions.innerHTML='';
-      opts.forEach(opt=>{ const b=document.createElement('button'); b.className='btn'; b.textContent=opt; b.onclick=()=>{ quizState.tried++; const ok=isCorrect(opt,answer,askHanzi); if(ok) quizState.correct++; els.quizMsg.textContent= ok? '✅ 정답!' : ('❌ 오답. 정답: '+answer); updateQuizStat(); }; els.mcOptions.appendChild(b); });
-      els.quizMsg.textContent='';
+    function makeOptions(field){
+      const pool = cards.map(x=>x[field]).filter(Boolean);
+      for(let i=pool.length-1;i>0;i--){const j=(Math.random()*(i+1)|0);[pool[i],pool[j]]=[pool[j],pool[i]];}
+      const opts=new Set([quizCorrect]);
+      for(const v of pool){ if(opts.size>=4) break; if(v!==quizCorrect) opts.add(v);} 
+      const arr=[...opts];
+      for(let i=arr.length-1;i>0;i--){const j=(Math.random()*(i+1)|0);[arr[i],arr[j]]=[arr[j],arr[i]];}
+      mcOptions.innerHTML='';
+      arr.forEach(t=>{
+        const b=document.createElement('button');b.className='btn';b.textContent=t;
+        b.onclick=()=>{ const ok=(t===quizCorrect); quizFeedback.textContent=(ok?'✅ 정답':'❌ 정답: '+quizCorrect); if(ok) playDing(); };
+        mcOptions.appendChild(b);
+      });
     }
-    function compareChoice(a,b){ if(a==null||b==null) return false; const A=/[\u4e00-\u9fa5]/.test(a)? normalizeZh(a):normalizeKo(a); const B=/[\u4e00-\u9fa5]/.test(b)? normalizeZh(b):normalizeKo(b); return A===B; }
-    function isCorrect(pick,answer,askHanzi){ return askHanzi? (normalizeKo(pick)===normalizeKo(answer)) : (normalizeZh(pick)===normalizeZh(answer)); }
 
-    // ===== 10) TTS (중국어 우선) =====
-    let voices=[]; function loadVoices(){ try{ voices = window.speechSynthesis? speechSynthesis.getVoices():[]; }catch(e){ voices=[]; } }
-    if('speechSynthesis' in window){ loadVoices(); speechSynthesis.onvoiceschanged=loadVoices; }
-    function pickZh(){ return voices.find(v=>/zh|Chinese|Mandarin/i.test(((v.lang||'')+v.name))) || null; }
-    function speak(text){ if(!text || !('speechSynthesis' in window)) return; const u=new SpeechSynthesisUtterance(text); const v=pickZh(); u.lang=(v&&v.lang)||'zh-CN'; if(v) u.voice=v; u.rate=1.0; u.pitch=1.0; try{ speechSynthesis.cancel(); setTimeout(()=>speechSynthesis.speak(u),0); }catch(e){} }
-    document.getElementById('speakWord').onclick=()=>{ const c=current(); if(c){ speak(c.hanzi); } };
-    document.getElementById('speakExample').onclick=()=>{ const c=current(); if(c){ speak(c.example||c.hanzi); } };
+    // 8) 음성 합성(TTS)
+    function speakZh(text){
+      if(!('speechSynthesis' in window) || !text) return;
+      const u=new SpeechSynthesisUtterance(text);
+      u.lang='zh-CN'; u.rate=1; u.pitch=1;
+      try{ speechSynthesis.cancel(); setTimeout(()=>speechSynthesis.speak(u),0); }catch(e){}
+    }
 
-    // ===== 11) 이벤트 =====
-    document.getElementById('nextBtn').onclick=next; document.getElementById('prevBtn').onclick=prev; document.getElementById('shuffleBtn').onclick=shuffle;
-    els.search.oninput=applyFilter; els.filterPos.onchange=applyFilter; els.filterChap.onchange=applyFilter;
-    document.addEventListener('keydown',(e)=>{ if(['INPUT','TEXTAREA','DIALOG'].includes(e.target.tagName)) return; if(e.code==='Space'){ e.preventDefault(); next(); } if(e.key==='ArrowRight') next(); if(e.key==='ArrowLeft') prev(); if(e.key.toLowerCase()==='f') shuffle(); });
+    // 9) 정답 효과음 (Web Audio로 ‘띵동’)
+    function playDing(){
+      const AC = window.AudioContext||window.webkitAudioContext; if(!AC) return; const ctx=new AC();
+      const now=ctx.currentTime;
+      const o1=ctx.createOscillator(), g1=ctx.createGain(); o1.type='sine'; o1.frequency.setValueAtTime(880, now);
+      g1.gain.setValueAtTime(0.0001, now); g1.gain.exponentialRampToValueAtTime(0.25, now+0.01); g1.gain.exponentialRampToValueAtTime(0.0001, now+0.23);
+      o1.connect(g1).connect(ctx.destination); o1.start(now); o1.stop(now+0.24);
+      const o2=ctx.createOscillator(), g2=ctx.createGain(); o2.type='sine'; o2.frequency.setValueAtTime(660, now+0.26);
+      g2.gain.setValueAtTime(0.0001, now+0.26); g2.gain.exponentialRampToValueAtTime(0.22, now+0.27); g2.gain.exponentialRampToValueAtTime(0.0001, now+0.52);
+      o2.connect(g2).connect(ctx.destination); o2.start(now+0.26); o2.stop(now+0.53);
+    }
 
-    // ===== 12) 초기화 =====
-    applyFilter(); render();
-  </script>  <!--
-  ▶ 구글 Apps Script (시트 첫 번째 시트 기준)
+    // 10) 뜻 토글(탭하여 보기)
+    document.getElementById('meaning').addEventListener('click',()=>{
+      const el = document.getElementById('meaning');
+      const val = el.dataset.value||''; if(!val) return;
+      if(el.classList.contains('masked')){ el.classList.remove('masked'); el.textContent=val; }
+      else { el.classList.add('masked'); el.textContent='탭하여 뜻 보기'; }
+    });
+
+    // 11) 버튼/이벤트
+    document.getElementById('speakWord').onclick=()=>{const c=current(); if(c) speakZh(c.hanzi);};
+    document.getElementById('speakExample').onclick=()=>{const c=current(); if(c) speakZh(c.example||c.hanzi);};
+    document.getElementById('nextBtn').onclick=()=>{ next(); };
+    document.getElementById('prevBtn').onclick=()=>{ prev(); };
+    document.getElementById('syncBtn').onclick=sync;
+    document.getElementById('quizBtn').onclick=startQuiz;
+    document.getElementById('quizNext').onclick=()=>{ next(); nextQuiz(); };
+    document.getElementById('modeH2M').onclick=()=>{quizMode='hanzi2meaning'; nextQuiz(); quizModeModal.close(); quizModal.showModal();};
+    document.getElementById('modeM2H').onclick=()=>{quizMode='meaning2hanzi'; nextQuiz(); quizModeModal.close(); quizModal.showModal();};
+
+    // 12) 초기 렌더
+    render();
+  </script>
+
+  <!-- Apps Script 예시
   function doGet(e){
-    const sheet = SpreadsheetApp.getActive().getSheets()[0];
-    const rows = sheet.getDataRange().getValues();
-    rows.shift();
-    const items = rows.filter(r=>r[0]).map(r=>({
-      hanzi:r[0], pinyin:r[1], meaning:r[2], pos:r[3], example:r[4], example_ko:r[5], chapter:r[6]||''
-    }));
-    return ContentService.createTextOutput(JSON.stringify({ok:true,data:items})).setMimeType(ContentService.MimeType.JSON);
+    const sheet=SpreadsheetApp.getActive().getSheets()[0];
+    const rows=sheet.getDataRange().getValues(); rows.shift();
+    const items=rows.map(r=>({hanzi:r[0],pinyin:r[1],meaning:r[2],pos:r[3],example:r[4],example_ko:r[5],chapter:r[6]}));
+    return ContentService.createTextOutput(JSON.stringify(items)).setMimeType(ContentService.MimeType.JSON);
   }
-  function doPost(e){
-    const sheet = SpreadsheetApp.getActive().getSheets()[0];
-    const body = JSON.parse(e.postData.contents||'{}');
-    if(body.action==='write' && Array.isArray(body.data)){
-      sheet.clear();
-      const head=['hanzi','pinyin','meaning','pos','example','example_ko','chapter'];
-      sheet.appendRow(head);
-      body.data.forEach(it=>sheet.appendRow([it.hanzi||'',it.pinyin||'',it.meaning||'',it.pos||'',it.example||'',it.example_ko||'',it.chapter||'' ]));
-      return ContentService.createTextOutput(JSON.stringify({ok:true,rows:body.data.length})).setMimeType(ContentService.MimeType.JSON);
-    }
-    return ContentService.createTextOutput(JSON.stringify({ok:false})).setMimeType(ContentService.MimeType.JSON);
-  }
-  --></body>
+  -->
+</body>
 </html>

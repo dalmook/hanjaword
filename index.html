@@ -119,25 +119,26 @@
     function prev(){ cursor=(cursor-1+cards.length)%cards.length; render(); }
 
     // 구글 시트 동기화
-    async function sync(){
-      const EP_KEY='cn_vocab_endpoint';
-      let url = localStorage.getItem(EP_KEY) || prompt('https://script.google.com/macros/s/AKfycbwpY0YKjzzr2KIfWIi8bcdNR4eJqyk8Hr2cRY4tt2MuIv8syI_wStRpnry0JVCwHp8f/exec');
-      if(!url) return; localStorage.setItem(EP_KEY, url);
-      try{
-        const res = await fetch(url);
-        const js = await res.json();
-        const data = Array.isArray(js) ? js : (js && js.data ? js.data : []);
-        if(Array.isArray(data)){
-          cards = data;
-          save(); cursor=0; render();
-          alert('동기화 완료: '+cards.length+'개 항목');
-        } else {
-          alert('응답 형식을 확인하세요. data 배열이 없습니다.');
-        }
-      }catch(e){ alert('동기화 실패: '+e); }
+  async function sync(){
+    const EP_KEY='cn_vocab_endpoint';
+    let url = localStorage.getItem(EP_KEY) || prompt('https://script.google.com/macros/s/AKfycbwpY0YKjzzr2KIfWIi8bcdNR4eJqyk8Hr2cRY4tt2MuIv8syI_wStRpnry0JVCwHp8f/exec');
+    if(!url) return; 
+    localStorage.setItem(EP_KEY, url);
+    try{
+      const res = await fetch(url);
+      const js = await res.json();
+      const data = Array.isArray(js) ? js : (js && js.data ? js.data : []);
+      if(Array.isArray(data)){
+        cards = data;
+        save(); cursor=0; render();
+        alert('동기화 완료: '+cards.length+'개 항목');
+      } else {
+        alert('응답 형식을 확인하세요. data 배열이 없습니다.');
+      }
+    }catch(e){ 
+      alert('동기화 실패: '+e); 
     }
-      }catch(e){ alert('동기화 실패:'+e); }
-    }
+  }
 
     // 퀴즈
     function startQuiz(){
